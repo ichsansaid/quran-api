@@ -12,7 +12,7 @@ class QuranRepositoryContract(ABC):
         pass
 
     @abstractmethod
-    def get_surah_by_no(self, no: int) -> Tuple[SurahEntity, Exception]:
+    def get_surah_by_no(self, no: int) -> Tuple[SurahEntity | None, Exception]:
         pass
 
     @abstractmethod
@@ -21,4 +21,12 @@ class QuranRepositoryContract(ABC):
 
     @abstractmethod
     def get_tafsir_by_no(self, no: int) -> Tuple[List[AyatEntity], Exception]:
+        pass
+
+    @abstractmethod
+    def save_all_surah(self, surah: List[SurahEntity]) -> Exception:
+        pass
+
+    @abstractmethod
+    def save_surah(self, surah: SurahEntity) -> Exception:
         pass
