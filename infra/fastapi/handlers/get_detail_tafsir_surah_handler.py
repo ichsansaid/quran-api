@@ -8,4 +8,11 @@ class GetDetailTafsirSurahHandler:
         self.ucase = ucase
 
     def __call__(self, nomor_surah: int) -> ResponseDto[DetailTafsirSurahDto]:
-        pass
+        result, err = self.ucase(nomor_surah)
+        if err:
+            raise err
+        return ResponseDto(
+            code=200,
+            message="Data retrieved successfully",
+            data=result
+        )

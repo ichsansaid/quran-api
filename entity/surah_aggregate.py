@@ -8,10 +8,10 @@ from entity.tafsir_entity import TafsirEntity
 
 
 class SurahAggregate(SurahEntity):
-    surat_selanjutnya: Optional[SurahBaseEntity] = Field(alias='suratSelanjutnya')
-    surat_sebelumnya: Optional[SurahBaseEntity] = Field(alias='suratSebelumnya')
-    ayat: List[AyatEntity] = Field()
-    tafsir: List[TafsirEntity] = Field()
+    surat_selanjutnya: Optional[SurahBaseEntity] = Field(alias='suratSelanjutnya', default=None)
+    surat_sebelumnya: Optional[SurahBaseEntity] = Field(alias='suratSebelumnya', default=None)
+    ayat: Optional[List[AyatEntity]] = Field(default=None)
+    tafsir: Optional[List[TafsirEntity]] = Field(default=None)
 
     @classmethod
     def from_entity[T: SurahEntity](cls, surah: T | List[T]) -> T | List[T]:
