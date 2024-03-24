@@ -1,32 +1,30 @@
 from typing import Tuple
 
-from contracts.get_ayat_by_no_contract import GetAyatByNoSurahContract
-from contracts.get_detail_ayat_surah_ucase_contract import GetDetailAyatSurahUcaseContract
+from contracts.alternate_quran_repo_contract import AlternateQuranRepoContract
+from contracts.get_detail_tafsir_surah_ucase_contract import GetDetailTafsirSurahUcaseContract
 from contracts.get_surah_by_no_ucase_contract import GetSurahByNoContract
-from dto.detail_ayat_surah_dto import DetailAyatSurahDto
+from contracts.get_tafsir_by_no_contract import GetTafsirByNoSurahContract
+from contracts.persistent_quran_repo_contract import PersistentQuranRepoContract
+from dto.detail_tafsir_surah_dto import DetailTafsirSurahDto
 from entity.surah_entity import SurahBaseEntity
 
 
-class GetDetailAyatSurahUcaseImpl(GetDetailAyatSurahUcaseContract):
+class GetDetailTafsirSurahUcaseImpl(GetDetailTafsirSurahUcaseContract):
     def __init__(
             self,
             get_surah_by_no: GetSurahByNoContract,
-            get_ayat_by_no_surah: GetAyatByNoSurahContract,
+            get_tafsir_by_no_surah: GetTafsirByNoSurahContract,
     ):
+        self.get_tafsir_by_no_surah = get_tafsir_by_no_surah
         self.get_surah_by_no = get_surah_by_no
-        self.get_ayat_by_no_surah = get_ayat_by_no_surah
 
-    def __call__(self, nomor_surah: int) -> Tuple[DetailAyatSurahDto | None, Exception | None]:
+    def __call__(self, nomor_surah: int) -> Tuple[DetailTafsirSurahDto | None, Exception | None]:
         surah, err = self.get_surah_by_no(nomor_surah)
+        result = DetailTafsirSurahDto.model_validate(surah, from_attributes=True)
+        tafsir, err = self.get_tafsir_by_no_surah(surah.nomor)
         if err:
             return None, err
-        result = DetailAyatSurahDto.model_validate(surah, from_attributes=True)
-
-        ayat, err = self.get_ayat_by_no_surah(surah.nomor)
-        if err:
-            return None, err
-        result.ayat = ayat
-
+        result.tafsir = tafsir
         if nomor_surah < 114:
             surat_selanjutnya, err = self.get_surah_by_no(nomor_surah + 1)
             result.surat_selanjutnya = SurahBaseEntity.model_validate(surat_selanjutnya)
