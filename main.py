@@ -1,7 +1,11 @@
+import os
+
 import uvicorn
 from sqlalchemy import create_engine, Engine
+from starlette.staticfiles import StaticFiles
 
 from infra.fastapi.app import NewFastAPIApp
+from infra.fastapi.handlers.cdn_fallback_caching_handler import CdnFallbackCachingHandler
 from infra.fastapi.handlers.get_daftar_surah_handler import GetDaftarSurahHandler
 from infra.fastapi.handlers.get_detail_ayat_surah_handler import GetDetailAyatSurahHandler
 from infra.fastapi.handlers.get_detail_tafsir_surah_handler import GetDetailTafsirSurahHandler
@@ -19,7 +23,7 @@ from usecases.get_detail_tafsir_surah_ucase_impl import GetDetailTafsirSurahUcas
 from usecases.get_surah_by_no_ucase_impl import GetSurahByNoUcaseImpl
 from usecases.get_tafsir_by_no_surah_ucase_impl import GetTafsirByNoSurahUcaseImpl
 
-engine: QuranEngine | Engine = create_engine("sqlite:///quran.db")
+engine: QuranEngine | Engine = create_engine("sqlite:///store/sqlite/quran.db")
 
 persistent_repo = QuranRepoImpl(
     engine=engine,
@@ -67,7 +71,11 @@ app = NewFastAPIApp(
             )
         )
     ]
-)
+)()
+
+app.mount("/quran-static", CdnFallbackCachingHandler(directory=os.path.join("store", "static", "quran"), fallback_caching_url="https://equran.nos.wjv-1.neo.id/audio-full/"),
+          name="quran")
+
 uvicorn.run(
     app,
     host='0.0.0.0',
