@@ -20,7 +20,7 @@ class GetDetailAyatSurahUcaseImpl(GetDetailAyatSurahUcaseContract):
         surah, err = self.get_surah_by_no(nomor_surah)
         if err:
             return None, err
-        result = DetailAyatSurahDto.model_validate(surah, from_attributes=True)
+        result = DetailAyatSurahDto.from_entity(surah)
 
         ayat, err = self.get_ayat_by_no_surah(surah.nomor)
         if err:
