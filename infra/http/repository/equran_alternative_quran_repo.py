@@ -43,6 +43,7 @@ class EQuranAlternativeQuranRepo(AlternateQuranRepoContract):
         data = response_data['data']['ayat']
         result = []
         for _data in data:
+            _data['nomorSurah'] = no
             ayat = AyatEntity.model_validate(_data,  from_attributes=False)
             result.append(ayat)
         return result, None

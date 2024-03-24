@@ -1,4 +1,4 @@
-from typing import Optional, Self, List
+from typing import Optional, List, Self
 
 from pydantic import Field
 
@@ -14,7 +14,7 @@ class SurahAggregate(SurahEntity):
     tafsir: Optional[List[TafsirEntity]] = Field(default=None)
 
     @classmethod
-    def from_entity[T: SurahEntity](cls, surah: T | List[T]) -> T | List[T]:
+    def from_entity[T: SurahEntity](cls, surah: T | List[T]) -> Self:
         if isinstance(surah, list):
-            return [cls.model_validate(p) for p in surah]
-        return cls.model_validate(surah)
+            return [cls.model_validate(p, from_attributes=True) for p in surah]
+        return cls.model_validate(surah, from_attributes=True)
