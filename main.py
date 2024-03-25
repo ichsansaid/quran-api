@@ -2,10 +2,9 @@ import os
 
 import uvicorn
 from sqlalchemy import create_engine, Engine
-from starlette.staticfiles import StaticFiles
 
 from infra.fastapi.app import NewFastAPIApp
-from infra.fastapi.handlers.cdn_fallback_caching_handler import CdnFallbackCachingHandler
+from infra.fastapi.handlers.cdn_cache_aside_handler import CdnCacheAsideHandler
 from infra.fastapi.handlers.get_daftar_surah_handler import GetDaftarSurahHandler
 from infra.fastapi.handlers.get_detail_ayat_surah_handler import GetDetailAyatSurahHandler
 from infra.fastapi.handlers.get_detail_tafsir_surah_handler import GetDetailTafsirSurahHandler
@@ -73,7 +72,7 @@ app = NewFastAPIApp(
     ]
 )()
 
-app.mount("/quran-static", CdnFallbackCachingHandler(directory=os.path.join("store", "static", "quran"), fallback_caching_url="https://equran.nos.wjv-1.neo.id/audio-full/"),
+app.mount("/quran-static", CdnCacheAsideHandler(directory=os.path.join("store", "static", "quran"), fallback_caching_url="https://equran.nos.wjv-1.neo.id/audio-full/"),
           name="quran")
 
 uvicorn.run(

@@ -6,7 +6,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import Scope, Receive, Send
 
 
-class CdnFallbackCachingHandler(StaticFiles):
+class CdnCacheAsideHandler(StaticFiles):
     def __init__(self, directory: str, fallback_caching_url: str):
         super().__init__(directory=directory)
         self.fallback_caching_url = fallback_caching_url
@@ -38,4 +38,5 @@ class CdnFallbackCachingHandler(StaticFiles):
                         f.write(response.data)
                     response = await self.get_response(path, scope)
                     await response(scope, receive, send)
-            raise ex
+            else:
+                raise ex
